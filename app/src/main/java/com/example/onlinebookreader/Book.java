@@ -9,16 +9,18 @@ public class Book implements Serializable {
     private String category;
     private String description;
     private String link;
+    private String coverImageUrl; // Add this field
 
     // Empty constructor required for Firestore
     public Book() {}
 
-    public Book(String title, String author, String category, String description, String link) {
+    public Book(String title, String author, String category, String description, String link, String coverImageUrl) {
         this.title = title;
         this.author = author;
         this.category = category;
         this.description = description;
         this.link = link;
+        this.coverImageUrl = coverImageUrl; // Initialize the field
     }
 
     // Getters and setters
@@ -60,5 +62,13 @@ public class Book implements Serializable {
 
     public void setLink(String link) {
         this.link = link;
+    }
+
+    public String getCoverImageUrl() {
+        return coverImageUrl;
+    }
+
+    public void setCoverImageUrl(String coverImageUrl) {
+        this.coverImageUrl = coverImageUrl;
     }
 }

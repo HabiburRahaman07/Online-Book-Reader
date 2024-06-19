@@ -97,11 +97,13 @@ public class MainActivity extends AppCompatActivity {
                 bookList.clear(); // Clear the list to avoid duplication
                 for (QueryDocumentSnapshot document : task.getResult()) {
                     Book book = document.toObject(Book.class);
+                    // Assuming Firestore document contains a field "coverImageUrl"
+                    book.setCoverImageUrl(document.getString("coverImageUrl"));
                     bookList.add(book);
                 }
                 bookAdapter.notifyDataSetChanged();
-                passBooksToLibrary();
             } else {
+                // Handle the error
                 Toast.makeText(MainActivity.this, "Failed to load books: " + task.getException().getMessage(), Toast.LENGTH_LONG).show();
             }
         });

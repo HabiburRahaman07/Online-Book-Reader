@@ -1,11 +1,11 @@
 package com.example.onlinebookreader;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -27,6 +27,7 @@ public class LibraryActivity extends AppCompatActivity {
     private List<Book> displayedBooks = new ArrayList<>();
     private Spinner categorySpinner;
     private List<String> categories = new ArrayList<>();
+    private ArrayAdapter<String> categoryAdapter;
 
     private FirebaseFirestore db;
     private BottomNavigationView bottomNavigationView;
@@ -51,33 +52,9 @@ public class LibraryActivity extends AppCompatActivity {
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         categorySpinner = findViewById(R.id.category_spinner);
-
-        fetchBooks();
-
-
-    }
-
-    private void fetchBooks() {
-        db.collection("books").get().addOnCompleteListener(task -> {
-            if (task.isSuccessful()) {
-                allBooks.clear();
-                for (QueryDocumentSnapshot document : task.getResult()) {
-                    Book book = document.toObject(Book.class);
-                    allBooks.add(book);
-                }
-                categories = getCategoriesFromBooks(allBooks);
-                setupCategorySpinner();
-                filterBooksByCategory("All");
-            } else {
-                // Handle error
-            }
-        });
-    }
-
-    private void setupCategorySpinner() {
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, categories);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        categorySpinner.setAdapter(adapter);
+        categoryAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, categories);
+        categoryAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        categorySpinner.setAdapter(categoryAdapter);
 
         categorySpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -89,6 +66,38 @@ public class LibraryActivity extends AppCompatActivity {
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
                 // Do nothing
+            }
+        });
+
+        bookAdapter = new BookAdapter(displayedBooks, book -> {
+            // Handle book click
+        });
+        recyclerView.setAdapter(bookAdapter);
+
+        fetchBooks();
+    }
+
+    private void fetchBooks() {
+        db.collection("books").get().addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                allBooks.clear(); // Clear the list to avoid duplication
+                for (QueryDocumentSnapshot document : task.getResult()) {
+                    Book book = document.toObject(Book.class);
+                    // Assuming Firestore document contains a field "coverImageUrl"
+                    book.setCoverImageUrl(document.getString("coverImageUrl"));
+                    allBooks.add(book);
+                }
+                categories.clear();
+                categories.addAll(getCategoriesFromBooks(allBooks));
+                categoryAdapter.notifyDataSetChanged();
+
+                // Initially display all books
+                displayedBooks.clear();
+                displayedBooks.addAll(allBooks);
+                bookAdapter.notifyDataSetChanged();
+            } else {
+                // Handle the error
+                Toast.makeText(LibraryActivity.this, "Failed to load books: " + task.getException().getMessage(), Toast.LENGTH_LONG).show();
             }
         });
     }
@@ -113,17 +122,6 @@ public class LibraryActivity extends AppCompatActivity {
                     .filter(book -> book.getCategory().equals(category))
                     .collect(Collectors.toList()));
         }
-        updateRecyclerView();
-    }
-
-    private void updateRecyclerView() {
-        if (bookAdapter == null) {
-            bookAdapter = new BookAdapter(displayedBooks, book -> {
-                // Handle book click
-            });
-            recyclerView.setAdapter(bookAdapter);
-        } else {
-            bookAdapter.setBooks(displayedBooks);
-        }
+        bookAdapter.notifyDataSetChanged();
     }
 }
