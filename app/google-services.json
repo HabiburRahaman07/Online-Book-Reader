@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "994223024985",
+    "project_id": "online-book-reader-e1b00",
+    "storage_bucket": "online-book-reader-e1b00.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:994223024985:android:dccb0c2053561eb306ba48",
+        "android_client_info": {
+          "package_name": "com.example.onlinebookreader"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDpwf9y7Sy5xs-Oo3G1URZlw2CUqKp9W84"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
