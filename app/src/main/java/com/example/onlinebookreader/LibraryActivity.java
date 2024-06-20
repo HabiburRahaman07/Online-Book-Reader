@@ -1,5 +1,6 @@
 package com.example.onlinebookreader;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
@@ -70,7 +71,9 @@ public class LibraryActivity extends AppCompatActivity {
         });
 
         bookAdapter = new BookAdapter(displayedBooks, book -> {
-            // Handle book click
+            Intent intent = new Intent(LibraryActivity.this, BookDetailsActivity.class);
+            intent.putExtra("book", book);
+            startActivity(intent);
         });
         recyclerView.setAdapter(bookAdapter);
 

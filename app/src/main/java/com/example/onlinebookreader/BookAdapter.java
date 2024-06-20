@@ -18,11 +18,6 @@ public class BookAdapter extends RecyclerView.Adapter<BookAdapter.BookViewHolder
     private List<Book> books;
     private OnBookClickListener onBookClickListener;
 
-    public void setBooks(List<Book> displayedBooks) {
-        this.books = books;
-        notifyDataSetChanged();
-    }
-
     public interface OnBookClickListener {
         void onBookClick(Book book);
     }
@@ -44,10 +39,7 @@ public class BookAdapter extends RecyclerView.Adapter<BookAdapter.BookViewHolder
         Book book = books.get(position);
         holder.titleTextView.setText(book.getTitle());
         holder.authorTextView.setText(book.getAuthor());
-        // Load the cover image using Glide or another image loading library
-        Glide.with(holder.itemView.getContext())
-                .load(book.getCoverImageUrl())
-                .into(holder.bookCoverImageView);
+        Glide.with(holder.itemView.getContext()).load(book.getCoverImageUrl()).into(holder.coverImageView);
         holder.itemView.setTag(book);
     }
 
@@ -56,16 +48,21 @@ public class BookAdapter extends RecyclerView.Adapter<BookAdapter.BookViewHolder
         return books.size();
     }
 
+    public void setBooks(List<Book> books) {
+        this.books = books;
+        notifyDataSetChanged();
+    }
+
     static class BookViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         TextView titleTextView, authorTextView;
-        ImageView bookCoverImageView;
+        ImageView coverImageView;
         OnBookClickListener onBookClickListener;
 
         BookViewHolder(View itemView, OnBookClickListener onBookClickListener) {
             super(itemView);
             titleTextView = itemView.findViewById(R.id.titleTextView);
             authorTextView = itemView.findViewById(R.id.authorTextView);
-            bookCoverImageView = itemView.findViewById(R.id.book_cover_image);
+            coverImageView = itemView.findViewById(R.id.coverImageView);
             this.onBookClickListener = onBookClickListener;
             itemView.setOnClickListener(this);
         }
