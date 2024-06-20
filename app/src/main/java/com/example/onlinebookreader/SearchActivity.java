@@ -1,10 +1,10 @@
 package com.example.onlinebookreader;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SearchView;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -16,17 +16,16 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 public class SearchActivity extends AppCompatActivity {
 
     private FirebaseFirestore db;
-    private RecyclerView searchRecyclerView;
     private BookAdapter bookAdapter;
-    private List<Book> bookList = new ArrayList<>();
-    private List<Book> filteredBookList = new ArrayList<>();
+    private final List<Book> bookList = new ArrayList<>();
+    private final List<Book> filteredBookList = new ArrayList<>();
     private SearchView searchView;
-    private BottomNavigationView bottomNavigationView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,7 +33,7 @@ public class SearchActivity extends AppCompatActivity {
         setContentView(R.layout.activity_search);
 
         db = FirebaseFirestore.getInstance();
-        searchRecyclerView = findViewById(R.id.searchRecyclerView);
+        RecyclerView searchRecyclerView = findViewById(R.id.searchRecyclerView);
         searchView = findViewById(R.id.searchView);
         searchRecyclerView.setLayoutManager(new LinearLayoutManager(this));
 
@@ -47,6 +46,8 @@ public class SearchActivity extends AppCompatActivity {
 
 
         fetchBooks();
+
+        searchView.setOnClickListener(v -> searchView.setIconified(false));
 
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
@@ -62,7 +63,7 @@ public class SearchActivity extends AppCompatActivity {
             }
         });
 
-        bottomNavigationView = findViewById(R.id.bottom_navigation);
+        BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation);
         bottomNavigationView.setOnNavigationItemSelectedListener(item -> {
             NavigationHelper.navigate(SearchActivity.this, item.getItemId());
             return true;
@@ -72,6 +73,7 @@ public class SearchActivity extends AppCompatActivity {
         bottomNavigationView.setSelectedItemId(R.id.navigation_search);
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     private void fetchBooks() {
         db.collection("books").get().addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
@@ -84,11 +86,12 @@ public class SearchActivity extends AppCompatActivity {
                 filteredBookList.addAll(bookList);
                 bookAdapter.notifyDataSetChanged();
             } else {
-                Toast.makeText(SearchActivity.this, "Failed to load books: " + task.getException().getMessage(), Toast.LENGTH_LONG).show();
+                Toast.makeText(SearchActivity.this, "Failed to load books: " + Objects.requireNonNull(task.getException()).getMessage(), Toast.LENGTH_LONG).show();
             }
         });
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     private void filterBooks(String query) {
         String lowerCaseQuery = query.toLowerCase();
         filteredBookList.clear();

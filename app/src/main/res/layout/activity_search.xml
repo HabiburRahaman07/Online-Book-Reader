@@ -12,7 +12,15 @@
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:iconifiedByDefault="false"
-        android:queryHint="Search books" />
+        android:queryHint="Search books"
+        android:background="@drawable/search_view_bg"
+
+        android:focusable="true"
+        android:clickable="true"
+        android:layout_margin="16dp"/>
+<!--        android:theme="@style/SearchViewTheme"-->
+
+
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/searchRecyclerView"

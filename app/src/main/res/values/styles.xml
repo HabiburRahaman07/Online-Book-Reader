@@ -32,4 +32,11 @@
         <item name="android:textColor">@color/colorOnPrimary</item>
         <item name="backgroundTint">@color/colorPrimary</item>
     </style>
+
+    <style name="SearchViewTheme" parent="Widget.AppCompat.SearchView">
+        <item name="queryBackground">@android:color/transparent</item>
+        <item name="submitBackground">@android:color/transparent</item>
+        <item name="searchIcon">@drawable/ic_search</item>
+        <item name="closeIcon">@drawable/ic_close_black_24dp</item>
+    </style>
 </resources>
